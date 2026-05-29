@@ -1,4 +1,33 @@
-.footer{
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 24px;
+/* .footer {
+    background: #333737;
+    color: white;
+    padding: 10px 15px;
+} */
+.footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.footerCenter {
+    display: flex;
+    gap: 20px;
+}
+.footerCenter p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.footerRight {
+    display: flex;
+    gap: 45px;
+}
+.footerRight a {
+    color: rgb(59, 177, 152);
+    font-size: 35px;
+}
+.copyright {
+    text-align: center;
+    margin-top: 15px;
 }

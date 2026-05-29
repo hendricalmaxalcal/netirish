@@ -1,10 +1,15 @@
-import Footer from "./web/footer.jsx"
+import Footer from "./web/footer";
 
 function App() {
+    return (
+        <div className="app-container">
+            <main className="main-content">
+                {/* Your page content here */}
+            </main>
 
-  return (
-    <Footer />
-  )
+            <Footer />
+        </div>
+    );
 }
 
-export default App
+export default App;

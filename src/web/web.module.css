@@ -61,6 +61,7 @@
     position: sticky;
     top: 0;
     z-index: 1000;
+    font-size: 16px;
 
     display: flex;
     justify-content: space-between;
@@ -95,9 +96,9 @@
 }
 
 .nav a {
+    font-size: 14px;
     text-decoration: none;
     color: #333;
-    font-weight: 500;
     transition: 0.3s;
 }
 
@@ -115,7 +116,7 @@
     background: none;
     border: none;
     color: #333;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
     transition: 0.3s;
 }
@@ -161,7 +162,7 @@
     margin-left: 5px;
 }
 
-/* @keyframes dropdownFade {
+@keyframes dropdownFade {
     from {
         opacity: 0;
         transform: translateY(-10px);
@@ -171,7 +172,7 @@
         opacity: 1;
         transform: translateY(0);
     }
-} */
+}
 
 /* =========================
    ACTION BUTTONS

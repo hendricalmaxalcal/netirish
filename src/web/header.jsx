@@ -5,9 +5,11 @@ import logo from "../assets/myIcon.jpg";
 function Header() {
     const [showServices, setShowServices] = useState(false);
     const [showProducts, setShowProducts] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const dropdownRef = useRef(null);
 
+    // Close dropdowns when clicking outside
     useEffect(() => {
         function handleClickOutside(event) {
             if (
@@ -22,24 +24,37 @@ function Header() {
         document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutside
-            );
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
 
     return (
         <header className={styles.header}>
-            <div className={styles.logo}>
-                <img src={logo} alt="NetIrish Logo" />
-                NetIrish
+            {/* LOGO + HAMBURGER */}
+            <div className={styles.leftSection}>
+                <div className={styles.logo}>
+                    <img src={logo} alt="NetIrish Logo" />
+                    NetIrish
+                </div>
+
+                <div
+                    className={styles.hamburger}
+                    onClick={() => setMenuOpen(!menuOpen)}
+                >
+                    ☰
+                </div>
             </div>
 
-            <nav className={styles.nav} ref={dropdownRef}>
-                <a href="#home">Home</a>
+            {/* NAV */}
+            <nav
+                className={`${styles.nav} ${menuOpen ? styles.navOpen : ""}`}
+                ref={dropdownRef}
+            >
+                <a href="#home" onClick={() => setMenuOpen(false)}>
+                    Home
+                </a>
 
-                {/* Services Dropdown */}
+                {/* SERVICES */}
                 <div className={styles.dropdown}>
                     <button
                         className={styles.navBtn}
@@ -61,7 +76,7 @@ function Header() {
                     )}
                 </div>
 
-                {/* Products Dropdown */}
+                {/* PRODUCTS */}
                 <div className={styles.dropdown}>
                     <button
                         className={styles.navBtn}
@@ -83,17 +98,18 @@ function Header() {
                     )}
                 </div>
 
-                <a href="#about">About Us</a>
+                <a href="#about" onClick={() => setMenuOpen(false)}>
+                    About Us
+                </a>
             </nav>
 
+            {/* ACTION BUTTONS */}
             <div className={styles.actions}>
                 <button className={styles.secondaryBtn}>
                     Customer Care
                 </button>
 
-                <button>
-                    Get Started
-                </button>
+                <button>Get Started</button>
             </div>
         </header>
     );

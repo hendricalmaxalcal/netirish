@@ -207,3 +207,59 @@
     background: #397ff1 !important;
     color: white !important;
 }
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.hamburger {
+    display: none;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .hamburger {
+        display: block;
+    }
+
+    .nav {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+
+        background: white;
+
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 20px;
+
+        display: none;
+
+        gap: 15px;
+    }
+
+    .navOpen {
+        display: flex;
+    }
+
+    .actions {
+        display: none; /* hide buttons on mobile or move them into menu */
+    }
+
+    .dropdownMenu {
+        position: static;
+        box-shadow: none;
+        width: 100%;
+    }
+}

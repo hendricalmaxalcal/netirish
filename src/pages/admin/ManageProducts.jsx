@@ -11,6 +11,13 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
+const SUBCATEGORIES = [
+  { value: "computers_laptops", label: "Computers & Laptops" },
+  { value: "phones", label: "Phones" },
+  { value: "accessories", label: "Accessories" },
+  { value: "routers", label: "Routers" },
+];
+
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
   const [form, setForm] = useState({
@@ -18,10 +25,14 @@ export default function ManageProducts() {
     description: "",
     price: "",
     category: "product",
+    subCategory: "",
+    brand: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [editingHasImage, setEditingHasImage] = useState(false);
+  const [formError, setFormError] = useState("");
 
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "products"), (snap) => {
@@ -32,16 +43,37 @@ export default function ManageProducts() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setFormError("");
   };
 
   const resetForm = () => {
-    setForm({ name: "", description: "", price: "", category: "product" });
+    setForm({ name: "", description: "", price: "", category: "product", subCategory: "", brand: "" });
     setImageFile(null);
     setEditingId(null);
+    setEditingHasImage(false);
+    setFormError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError("");
+
+    if (form.category === "product") {
+      const hasImage = imageFile || (editingId && editingHasImage);
+      if (!hasImage) {
+        setFormError("An image is required for products.");
+        return;
+      }
+      if (!form.subCategory) {
+        setFormError("Please select a sub-category.");
+        return;
+      }
+      if (!form.brand.trim()) {
+        setFormError("Please enter a brand.");
+        return;
+      }
+    }
+
     setUploading(true);
 
     try {
@@ -53,12 +85,16 @@ export default function ManageProducts() {
         imageUrl = await getDownloadURL(storageRef);
       }
 
+      const isProduct = form.category === "product";
+
       if (editingId) {
         const updateData = {
           name: form.name,
           description: form.description,
           price: Number(form.price),
           category: form.category,
+          subCategory: isProduct ? form.subCategory : "",
+          brand: isProduct ? form.brand.trim() : "",
         };
         if (imageUrl) updateData.imageUrl = imageUrl;
         await updateDoc(doc(db, "products", editingId), updateData);
@@ -68,6 +104,8 @@ export default function ManageProducts() {
           description: form.description,
           price: Number(form.price),
           category: form.category,
+          subCategory: isProduct ? form.subCategory : "",
+          brand: isProduct ? form.brand.trim() : "",
           imageUrl: imageUrl || "",
           status: "active",
           createdAt: serverTimestamp(),
@@ -77,7 +115,7 @@ export default function ManageProducts() {
       resetForm();
     } catch (err) {
       console.error("Error saving product:", err);
-      alert("Error saving product: " + err.message);
+      setFormError("Error saving: " + err.message);
     } finally {
       setUploading(false);
     }
@@ -89,8 +127,13 @@ export default function ManageProducts() {
       description: product.description,
       price: product.price,
       category: product.category,
+      subCategory: product.subCategory || "",
+      brand: product.brand || "",
     });
     setEditingId(product.id);
+    setEditingHasImage(!!product.imageUrl);
+    setImageFile(null);
+    setFormError("");
   };
 
   const toggleStatus = async (product) => {
@@ -100,17 +143,25 @@ export default function ManageProducts() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Delete this product?")) {
+    if (confirm("Delete this item?")) {
       await deleteDoc(doc(db, "products", id));
     }
   };
+
+  const imageRequired = form.category === "product";
+  const isProductCategory = form.category === "product";
+
+  const subCategoryLabel = (value) =>
+    SUBCATEGORIES.find((s) => s.value === value)?.label || value;
 
   return (
     <div style={pageStyle}>
       <h1 style={titleStyle}>Manage Products</h1>
 
       <div style={formCardStyle}>
-        <h3 style={formTitleStyle}>{editingId ? "Edit Product" : "Add New Product"}</h3>
+        <h3 style={formTitleStyle}>{editingId ? "Edit Item" : "Add New Item"}</h3>
+
+        {formError && <p style={errorStyle}>{formError}</p>}
 
         <form onSubmit={handleSubmit}>
           <label style={labelStyle}>Name</label>
@@ -134,7 +185,7 @@ export default function ManageProducts() {
 
           <div style={rowStyle}>
             <div style={colStyle}>
-              <label style={labelStyle}>Price</label>
+              <label style={labelStyle}>Price (Tsh)</label>
               <input
                 type="number"
                 name="price"
@@ -147,7 +198,7 @@ export default function ManageProducts() {
               />
             </div>
             <div style={colStyle}>
-              <label style={labelStyle}>Category</label>
+              <label style={labelStyle}>Type</label>
               <select
                 name="category"
                 value={form.category}
@@ -160,8 +211,46 @@ export default function ManageProducts() {
             </div>
           </div>
 
+          {isProductCategory && (
+            <div style={rowStyle}>
+              <div style={colStyle}>
+                <label style={labelStyle}>Sub-category</label>
+                <select
+                  name="subCategory"
+                  value={form.subCategory}
+                  onChange={handleChange}
+                  required
+                  style={{ ...inputStyle, cursor: "pointer" }}
+                >
+                  <option value="">Select sub-category</option>
+                  {SUBCATEGORIES.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={colStyle}>
+                <label style={labelStyle}>Brand</label>
+                <input
+                  type="text"
+                  name="brand"
+                  value={form.brand}
+                  onChange={handleChange}
+                  required
+                  placeholder="e.g. HP, Samsung, TP-Link"
+                  style={inputStyle}
+                />
+              </div>
+            </div>
+          )}
+
           <label style={labelStyle}>
-            Image {editingId && <span style={{ color: "#666" }}>(leave empty to keep current)</span>}
+            Image{" "}
+            {imageRequired ? (
+              <span style={{ color: "#ff6b6b" }}>(required)</span>
+            ) : (
+              <span style={{ color: "#666" }}>(optional)</span>
+            )}
+            {editingId && <span style={{ color: "#666" }}> — leave empty to keep current</span>}
           </label>
           <input
             type="file"
@@ -172,7 +261,7 @@ export default function ManageProducts() {
 
           <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
             <button type="submit" disabled={uploading} style={btnStyle}>
-              {uploading ? "Saving..." : editingId ? "Update Product" : "Add Product"}
+              {uploading ? "Saving..." : editingId ? "Update Item" : "Add Item"}
             </button>
             {editingId && (
               <button type="button" onClick={resetForm} style={cancelBtnStyle}>
@@ -183,14 +272,16 @@ export default function ManageProducts() {
         </form>
       </div>
 
-      <h3 style={{ ...formTitleStyle, marginTop: "40px" }}>All Products</h3>
+      <h3 style={{ ...formTitleStyle, marginTop: "40px" }}>All Items</h3>
       <div style={tableWrapStyle}>
         <table style={tableStyle}>
           <thead>
             <tr>
               <th style={thStyle}>Image</th>
               <th style={thStyle}>Name</th>
-              <th style={thStyle}>Category</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Sub-category</th>
+              <th style={thStyle}>Brand</th>
               <th style={thStyle}>Price</th>
               <th style={thStyle}>Status</th>
               <th style={thStyle}>Actions</th>
@@ -208,7 +299,9 @@ export default function ManageProducts() {
                 </td>
                 <td style={tdStyle}>{p.name}</td>
                 <td style={{ ...tdStyle, textTransform: "capitalize" }}>{p.category}</td>
-                <td style={tdStyle}>${Number(p.price).toFixed(2)}</td>
+                <td style={tdStyle}>{p.subCategory ? subCategoryLabel(p.subCategory) : "—"}</td>
+                <td style={tdStyle}>{p.brand || "—"}</td>
+                <td style={tdStyle}>Tsh {Number(p.price).toLocaleString()}</td>
                 <td style={tdStyle}>
                   <span style={p.status === "active" ? statusActive : statusInactive}>
                     {p.status}
@@ -227,7 +320,7 @@ export default function ManageProducts() {
             ))}
           </tbody>
         </table>
-        {products.length === 0 && <p style={{ color: "#9a9aae", padding: "20px" }}>No products yet.</p>}
+        {products.length === 0 && <p style={{ color: "#9a9aae", padding: "20px" }}>No items yet.</p>}
       </div>
     </div>
   );
@@ -318,6 +411,16 @@ const cancelBtnStyle = {
   cursor: "pointer",
 };
 
+const errorStyle = {
+  background: "#3a1a1a",
+  color: "#ff6b6b",
+  padding: "10px 14px",
+  borderRadius: "8px",
+  fontSize: "0.9rem",
+  marginBottom: "16px",
+  border: "1px solid #5a2a2a",
+};
+
 const tableWrapStyle = {
   background: "#1a1a24",
   border: "1px solid #2a2a3a",
@@ -329,7 +432,7 @@ const tableWrapStyle = {
 const tableStyle = {
   width: "100%",
   borderCollapse: "collapse",
-  minWidth: "700px",
+  minWidth: "850px",
 };
 
 const thStyle = {

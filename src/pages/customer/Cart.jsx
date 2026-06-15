@@ -4,6 +4,7 @@ import { CartContext } from "../../context/CartContext";
 import { AuthContext } from "../../context/AuthContext";
 import { db } from "../../firebase/config";
 import { collection, addDoc, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import styles from "../css/Cart.module.css";
 
 export default function Cart() {
   const { cart, updateQty, removeFromCart, clearCart, cartTotal } = useContext(CartContext);
@@ -13,7 +14,6 @@ export default function Cart() {
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
 
-  // Pre-fill phone from user's profile
   useEffect(() => {
     const fetchPhone = async () => {
       if (!user) return;
@@ -77,45 +77,45 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div style={pageStyle}>
-        <h1 style={titleStyle}>Your Cart</h1>
-        <p style={mutedTextStyle}>Your cart is empty.</p>
+      <div className={styles.page}>
+        <h1 className={styles.title}>Your Cart</h1>
+        <p className={styles.mutedText}>Your cart is empty.</p>
       </div>
     );
   }
 
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>Your Cart</h1>
+    <div className={styles.page}>
+      <h1 className={styles.title}>Your Cart</h1>
 
-      {error && <p style={errorStyle}>{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
 
-      <div style={listStyle}>
+      <div className={styles.list}>
         {cart.map((item) => (
-          <div key={item.cartItemId} style={itemCardStyle}>
-            <div style={itemImageWrapStyle}>
+          <div key={item.cartItemId} className={styles.itemCard}>
+            <div className={styles.itemImageWrap}>
               {item.imageUrl ? (
-                <img src={item.imageUrl} alt={item.name} style={itemImageStyle} />
+                <img src={item.imageUrl} alt={item.name} className={styles.itemImage} />
               ) : (
-                <div style={placeholderStyle}>No Image</div>
+                <div className={styles.placeholder}>No Image</div>
               )}
             </div>
 
-            <div style={itemInfoStyle}>
+            <div className={styles.itemInfo}>
               <div>
-                <span style={badgeStyle}>{item.category}</span>
-                <h3 style={itemNameStyle}>{item.name}</h3>
-                <p style={itemPriceStyle}>Tsh {Number(item.price).toLocaleString()}</p>
+                <span className={styles.badge}>{item.category}</span>
+                <h3 className={styles.itemName}>{item.name}</h3>
+                <p className={styles.itemPrice}>Tsh {Number(item.price).toLocaleString()}</p>
 
                 {item.category === "service" && (
-                  <div style={serviceDetailsStyle}>
+                  <div className={styles.serviceDetails}>
                     {item.preferredDate && (
-                      <p style={detailLineStyle}>
+                      <p className={styles.detailLine}>
                         <strong>Preferred date:</strong> {item.preferredDate}
                       </p>
                     )}
                     {item.notes && (
-                      <p style={detailLineStyle}>
+                      <p className={styles.detailLine}>
                         <strong>Notes:</strong> {item.notes}
                       </p>
                     )}
@@ -123,30 +123,30 @@ export default function Cart() {
                 )}
               </div>
 
-              <div style={itemActionsStyle}>
+              <div className={styles.itemActions}>
                 {item.category !== "service" && (
-                  <div style={qtyControlStyle}>
+                  <div className={styles.qtyControl}>
                     <button
                       onClick={() => updateQty(item.cartItemId, item.qty - 1)}
-                      style={qtyBtnStyle}
+                      className={styles.qtyBtn}
                     >
                       −
                     </button>
-                    <span style={qtyValueStyle}>{item.qty}</span>
+                    <span className={styles.qtyValue}>{item.qty}</span>
                     <button
                       onClick={() => updateQty(item.cartItemId, item.qty + 1)}
-                      style={qtyBtnStyle}
+                      className={styles.qtyBtn}
                     >
                       +
                     </button>
                   </div>
                 )}
 
-                <p style={lineTotalStyle}>
+                <p className={styles.lineTotal}>
                   Tsh {Number(item.price * item.qty).toLocaleString()}
                 </p>
 
-                <button onClick={() => removeFromCart(item.cartItemId)} style={removeBtnStyle}>
+                <button onClick={() => removeFromCart(item.cartItemId)} className={styles.removeBtn}>
                   Remove
                 </button>
               </div>
@@ -155,250 +155,24 @@ export default function Cart() {
         ))}
       </div>
 
-      <div style={phoneSectionStyle}>
-        <label style={labelStyle}>Contact Phone Number</label>
+      <div className={styles.phoneSection}>
+        <label className={styles.label}>Contact Phone Number</label>
         <input
           type="tel"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="+255700000000"
-          style={inputStyle}
+          className={styles.input}
         />
-        <p style={helperTextStyle}>We'll use this number to contact you about your order.</p>
+        <p className={styles.helperText}>We'll use this number to contact you about your order.</p>
       </div>
 
-      <div style={summaryStyle}>
-        <p style={totalStyle}>Total: Tsh {Number(cartTotal).toLocaleString()}</p>
-        <button onClick={handleCheckout} disabled={placing} style={checkoutBtnStyle}>
+      <div className={styles.summary}>
+        <p className={styles.total}>Total: Tsh {Number(cartTotal).toLocaleString()}</p>
+        <button onClick={handleCheckout} disabled={placing} className={styles.checkoutBtn}>
           {placing ? "Placing order..." : "Place Order"}
         </button>
       </div>
     </div>
   );
 }
-
-/* ---------- Styles ---------- */
-
-const pageStyle = {
-  minHeight: "calc(100vh - 70px)",
-  backgroundColor: "#0d0d0f",
-  color: "#fff",
-  fontFamily: "'Segoe UI', sans-serif",
-  padding: "40px 30px",
-};
-
-const titleStyle = {
-  fontSize: "2.2rem",
-  fontWeight: "800",
-  marginBottom: "30px",
-  background: "linear-gradient(90deg, #00c6ff, #7b2ff7)",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-};
-
-const mutedTextStyle = {
-  color: "#888",
-};
-
-const errorStyle = {
-  background: "#3a1a1a",
-  color: "#ff6b6b",
-  padding: "10px 14px",
-  borderRadius: "8px",
-  fontSize: "0.9rem",
-  marginBottom: "16px",
-  border: "1px solid #5a2a2a",
-  maxWidth: "700px",
-};
-
-const listStyle = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "16px",
-  maxWidth: "700px",
-  marginBottom: "30px",
-};
-
-const itemCardStyle = {
-  display: "flex",
-  gap: "16px",
-  background: "#1a1a24",
-  border: "1px solid #2a2a3a",
-  borderRadius: "12px",
-  padding: "16px",
-};
-
-const itemImageWrapStyle = {
-  width: "90px",
-  height: "90px",
-  flexShrink: 0,
-  borderRadius: "8px",
-  overflow: "hidden",
-  background: "#25253a",
-};
-
-const itemImageStyle = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-};
-
-const placeholderStyle = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#555",
-  fontSize: "0.75rem",
-};
-
-const itemInfoStyle = {
-  flex: 1,
-  display: "flex",
-  justifyContent: "space-between",
-  flexWrap: "wrap",
-  gap: "10px",
-};
-
-const badgeStyle = {
-  fontSize: "0.7rem",
-  background: "#2a2a3a",
-  color: "#00c6ff",
-  padding: "2px 8px",
-  borderRadius: "10px",
-  textTransform: "capitalize",
-};
-
-const itemNameStyle = {
-  margin: "6px 0 4px",
-  fontSize: "1rem",
-  color: "#fff",
-};
-
-const itemPriceStyle = {
-  margin: 0,
-  color: "#9a9aae",
-  fontSize: "0.9rem",
-};
-
-const serviceDetailsStyle = {
-  marginTop: "8px",
-};
-
-const detailLineStyle = {
-  margin: "2px 0",
-  fontSize: "0.8rem",
-  color: "#9a9aae",
-};
-
-const itemActionsStyle = {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-end",
-  justifyContent: "space-between",
-  gap: "8px",
-};
-
-const qtyControlStyle = {
-  display: "flex",
-  alignItems: "center",
-  gap: "10px",
-  background: "#0d0d0f",
-  border: "1px solid #2a2a3a",
-  borderRadius: "20px",
-  padding: "4px 10px",
-};
-
-const qtyBtnStyle = {
-  background: "transparent",
-  border: "none",
-  color: "#00c6ff",
-  fontSize: "1.1rem",
-  cursor: "pointer",
-  width: "20px",
-};
-
-const qtyValueStyle = {
-  minWidth: "20px",
-  textAlign: "center",
-};
-
-const lineTotalStyle = {
-  margin: 0,
-  fontWeight: "700",
-  color: "#7b2ff7",
-};
-
-const removeBtnStyle = {
-  background: "transparent",
-  border: "1px solid #2a2a3a",
-  color: "#ff6b6b",
-  borderRadius: "6px",
-  padding: "4px 12px",
-  fontSize: "0.8rem",
-  cursor: "pointer",
-};
-
-const phoneSectionStyle = {
-  maxWidth: "700px",
-  marginBottom: "24px",
-  paddingTop: "20px",
-  borderTop: "1px solid #2a2a3a",
-};
-
-const labelStyle = {
-  display: "block",
-  color: "#ccc",
-  fontSize: "0.9rem",
-  marginBottom: "8px",
-  fontWeight: "600",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "12px 14px",
-  borderRadius: "8px",
-  border: "1px solid #2a2a3a",
-  background: "#1a1a24",
-  color: "#fff",
-  fontSize: "0.95rem",
-  outline: "none",
-  boxSizing: "border-box",
-  maxWidth: "300px",
-};
-
-const helperTextStyle = {
-  marginTop: "6px",
-  color: "#9a9aae",
-  fontSize: "0.8rem",
-};
-
-const summaryStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  maxWidth: "700px",
-  paddingTop: "20px",
-  borderTop: "1px solid #2a2a3a",
-  flexWrap: "wrap",
-  gap: "16px",
-};
-
-const totalStyle = {
-  fontSize: "1.4rem",
-  fontWeight: "800",
-  margin: 0,
-  color: "#00c6ff",
-};
-
-const checkoutBtnStyle = {
-  padding: "14px 36px",
-  borderRadius: "30px",
-  border: "none",
-  background: "linear-gradient(90deg, #00c6ff, #7b2ff7)",
-  color: "#fff",
-  fontWeight: "700",
-  fontSize: "1rem",
-  cursor: "pointer",
-};

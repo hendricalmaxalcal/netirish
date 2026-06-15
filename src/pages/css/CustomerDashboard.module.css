@@ -1,0 +1,185 @@
+.page {
+  min-height: calc(100vh - 70px);
+  background-color: #0d0d0f;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 40px 30px;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.welcome {
+  color: #9a9aae;
+  margin-bottom: 30px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #2a2a3a;
+  padding-bottom: 10px;
+}
+
+.tabBtn {
+  padding: 10px 22px;
+  border-radius: 20px;
+  border: 1px solid #2a2a3a;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tabBtnActive {
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+  border: none;
+}
+
+.filterRow {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filterLabel {
+  display: block;
+  color: #9a9aae;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.select {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid #2a2a3a;
+  background: #1a1a24;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.mutedText {
+  color: #888;
+}
+
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 700px;
+}
+
+.orderCard {
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a2a3a;
+}
+
+.orderId {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.orderDate {
+  margin: 4px 0 0;
+  color: #9a9aae;
+  font-size: 0.85rem;
+}
+
+.itemsList {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #ddd;
+  padding: 4px 0;
+}
+
+.orderFooter {
+  padding-top: 16px;
+  border-top: 1px solid #2a2a3a;
+}
+
+.total {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #00c6ff;
+}
+
+.statusBadgePending {
+  background: #3a3a1a;
+  color: #ffd76b;
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusBadgeProcessing {
+  background: #1a2a3a;
+  color: #6bc6ff;
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusBadgeCompleted {
+  background: #1a3a1a;
+  color: #6bff6b;
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusBadgeCancelled {
+  background: #3a1a1a;
+  color: #ff6b6b;
+  padding: 5px 14px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}

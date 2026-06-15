@@ -10,6 +10,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import styles from "../css/ManageProducts.module.css";
 
 const SUBCATEGORIES = [
   { value: "computers_laptops", label: "Computers & Laptops" },
@@ -60,25 +61,15 @@ export default function ManageProducts() {
 
     if (form.category === "product") {
       const hasImage = imageFile || (editingId && editingHasImage);
-      if (!hasImage) {
-        setFormError("An image is required for products.");
-        return;
-      }
-      if (!form.subCategory) {
-        setFormError("Please select a sub-category.");
-        return;
-      }
-      if (!form.brand.trim()) {
-        setFormError("Please enter a brand.");
-        return;
-      }
+      if (!hasImage) { setFormError("An image is required for products."); return; }
+      if (!form.subCategory) { setFormError("Please select a sub-category."); return; }
+      if (!form.brand.trim()) { setFormError("Please enter a brand."); return; }
     }
 
     setUploading(true);
 
     try {
       let imageUrl = null;
-
       if (imageFile) {
         const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
         await uploadBytes(storageRef, imageFile);
@@ -111,10 +102,8 @@ export default function ManageProducts() {
           createdAt: serverTimestamp(),
         });
       }
-
       resetForm();
     } catch (err) {
-      console.error("Error saving product:", err);
       setFormError("Error saving: " + err.message);
     } finally {
       setUploading(false);
@@ -148,44 +137,43 @@ export default function ManageProducts() {
     }
   };
 
-  const imageRequired = form.category === "product";
-  const isProductCategory = form.category === "product";
-
   const subCategoryLabel = (value) =>
     SUBCATEGORIES.find((s) => s.value === value)?.label || value;
 
+  const isProduct = form.category === "product";
+
   return (
-    <div style={pageStyle}>
-      <h1 style={titleStyle}>Manage Products</h1>
+    <div className={styles.page}>
+      <h1 className={styles.title}>Manage Products</h1>
 
-      <div style={formCardStyle}>
-        <h3 style={formTitleStyle}>{editingId ? "Edit Item" : "Add New Item"}</h3>
+      <div className={styles.formCard}>
+        <h3 className={styles.formTitle}>{editingId ? "Edit Item" : "Add New Item"}</h3>
 
-        {formError && <p style={errorStyle}>{formError}</p>}
+        {formError && <p className={styles.error}>{formError}</p>}
 
         <form onSubmit={handleSubmit}>
-          <label style={labelStyle}>Name</label>
+          <label className={styles.label}>Name</label>
           <input
             type="text"
             name="name"
             value={form.name}
             onChange={handleChange}
             required
-            style={inputStyle}
+            className={styles.input}
           />
 
-          <label style={labelStyle}>Description</label>
+          <label className={styles.label}>Description</label>
           <textarea
             name="description"
             value={form.description}
             onChange={handleChange}
             required
-            style={{ ...inputStyle, minHeight: "80px", resize: "vertical" }}
+            className={styles.textarea}
           />
 
-          <div style={rowStyle}>
-            <div style={colStyle}>
-              <label style={labelStyle}>Price (Tsh)</label>
+          <div className={styles.row}>
+            <div className={styles.col}>
+              <label className={styles.label}>Price (Tsh)</label>
               <input
                 type="number"
                 name="price"
@@ -194,16 +182,17 @@ export default function ManageProducts() {
                 required
                 min="0"
                 step="0.01"
-                style={inputStyle}
+                className={styles.input}
               />
             </div>
-            <div style={colStyle}>
-              <label style={labelStyle}>Type</label>
+            <div className={styles.col}>
+              <label className={styles.label}>Type</label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                style={{ ...inputStyle, cursor: "pointer" }}
+                className={styles.input}
+                style={{ cursor: "pointer" }}
               >
                 <option value="product">Product</option>
                 <option value="service">Service</option>
@@ -211,16 +200,17 @@ export default function ManageProducts() {
             </div>
           </div>
 
-          {isProductCategory && (
-            <div style={rowStyle}>
-              <div style={colStyle}>
-                <label style={labelStyle}>Sub-category</label>
+          {isProduct && (
+            <div className={styles.row}>
+              <div className={styles.col}>
+                <label className={styles.label}>Sub-category</label>
                 <select
                   name="subCategory"
                   value={form.subCategory}
                   onChange={handleChange}
                   required
-                  style={{ ...inputStyle, cursor: "pointer" }}
+                  className={styles.input}
+                  style={{ cursor: "pointer" }}
                 >
                   <option value="">Select sub-category</option>
                   {SUBCATEGORIES.map((s) => (
@@ -228,8 +218,8 @@ export default function ManageProducts() {
                   ))}
                 </select>
               </div>
-              <div style={colStyle}>
-                <label style={labelStyle}>Brand</label>
+              <div className={styles.col}>
+                <label className={styles.label}>Brand</label>
                 <input
                   type="text"
                   name="brand"
@@ -237,34 +227,37 @@ export default function ManageProducts() {
                   onChange={handleChange}
                   required
                   placeholder="e.g. HP, Samsung, TP-Link"
-                  style={inputStyle}
+                  className={styles.input}
                 />
               </div>
             </div>
           )}
 
-          <label style={labelStyle}>
+          <label className={styles.label}>
             Image{" "}
-            {imageRequired ? (
-              <span style={{ color: "#ff6b6b" }}>(required)</span>
+            {isProduct ? (
+              <span className={styles.requiredMark}>(required)</span>
             ) : (
-              <span style={{ color: "#666" }}>(optional)</span>
+              <span className={styles.optionalMark}>(optional)</span>
             )}
-            {editingId && <span style={{ color: "#666" }}> — leave empty to keep current</span>}
+            {editingId && (
+              <span className={styles.optionalMark}> — leave empty to keep current</span>
+            )}
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setImageFile(e.target.files[0])}
-            style={{ ...inputStyle, padding: "10px" }}
+            className={styles.input}
+            style={{ padding: "10px" }}
           />
 
-          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-            <button type="submit" disabled={uploading} style={btnStyle}>
+          <div className={styles.formActions}>
+            <button type="submit" disabled={uploading} className={styles.btn}>
               {uploading ? "Saving..." : editingId ? "Update Item" : "Add Item"}
             </button>
             {editingId && (
-              <button type="button" onClick={resetForm} style={cancelBtnStyle}>
+              <button type="button" onClick={resetForm} className={styles.cancelBtn}>
                 Cancel
               </button>
             )}
@@ -272,221 +265,62 @@ export default function ManageProducts() {
         </form>
       </div>
 
-      <h3 style={{ ...formTitleStyle, marginTop: "40px" }}>All Items</h3>
-      <div style={tableWrapStyle}>
-        <table style={tableStyle}>
-          <thead>
-            <tr>
-              <th style={thStyle}>Image</th>
-              <th style={thStyle}>Name</th>
-              <th style={thStyle}>Type</th>
-              <th style={thStyle}>Sub-category</th>
-              <th style={thStyle}>Brand</th>
-              <th style={thStyle}>Price</th>
-              <th style={thStyle}>Status</th>
-              <th style={thStyle}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p) => (
-              <tr key={p.id}>
-                <td style={tdStyle}>
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} style={thumbStyle} />
-                  ) : (
-                    <span style={{ color: "#666" }}>No image</span>
-                  )}
-                </td>
-                <td style={tdStyle}>{p.name}</td>
-                <td style={{ ...tdStyle, textTransform: "capitalize" }}>{p.category}</td>
-                <td style={tdStyle}>{p.subCategory ? subCategoryLabel(p.subCategory) : "—"}</td>
-                <td style={tdStyle}>{p.brand || "—"}</td>
-                <td style={tdStyle}>Tsh {Number(p.price).toLocaleString()}</td>
-                <td style={tdStyle}>
-                  <span style={p.status === "active" ? statusActive : statusInactive}>
-                    {p.status}
-                  </span>
-                </td>
-                <td style={tdStyle}>
-                  <div style={{ display: "flex", gap: "8px" }}>
-                    <button onClick={() => handleEdit(p)} style={actionBtnStyle}>Edit</button>
-                    <button onClick={() => toggleStatus(p)} style={actionBtnStyle}>
-                      {p.status === "active" ? "Hide" : "Show"}
-                    </button>
-                    <button onClick={() => handleDelete(p.id)} style={deleteBtnStyle}>Delete</button>
-                  </div>
-                </td>
+      <div className={styles.tableSection}>
+        <h3 className={styles.tableTitle}>All Items</h3>
+        <div className={styles.tableWrap}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.th}>Image</th>
+                <th className={styles.th}>Name</th>
+                <th className={styles.th}>Type</th>
+                <th className={styles.th}>Sub-category</th>
+                <th className={styles.th}>Brand</th>
+                <th className={styles.th}>Price</th>
+                <th className={styles.th}>Status</th>
+                <th className={styles.th}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        {products.length === 0 && <p style={{ color: "#9a9aae", padding: "20px" }}>No items yet.</p>}
+            </thead>
+            <tbody>
+              {products.map((p) => (
+                <tr key={p.id}>
+                  <td className={styles.td}>
+                    {p.imageUrl ? (
+                      <img src={p.imageUrl} alt={p.name} className={styles.thumb} />
+                    ) : (
+                      <span className={styles.noImage}>No image</span>
+                    )}
+                  </td>
+                  <td className={styles.td}>{p.name}</td>
+                  <td className={styles.td}>{p.category}</td>
+                  <td className={styles.td}>
+                    {p.subCategory ? subCategoryLabel(p.subCategory) : "—"}
+                  </td>
+                  <td className={styles.td}>{p.brand || "—"}</td>
+                  <td className={styles.td}>Tsh {Number(p.price).toLocaleString()}</td>
+                  <td className={styles.td}>
+                    <span className={p.status === "active" ? styles.statusActive : styles.statusInactive}>
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className={styles.td}>
+                    <div className={styles.tableActions}>
+                      <button onClick={() => handleEdit(p)} className={styles.actionBtn}>Edit</button>
+                      <button onClick={() => toggleStatus(p)} className={styles.actionBtn}>
+                        {p.status === "active" ? "Hide" : "Show"}
+                      </button>
+                      <button onClick={() => handleDelete(p.id)} className={styles.deleteBtn}>Delete</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {products.length === 0 && (
+            <p className={styles.emptyText}>No items yet.</p>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
-/* ---------- Styles ---------- */
-
-const pageStyle = {
-  minHeight: "calc(100vh - 70px)",
-  backgroundColor: "#0d0d0f",
-  color: "#fff",
-  fontFamily: "'Segoe UI', sans-serif",
-  padding: "40px 30px",
-};
-
-const titleStyle = {
-  fontSize: "2.2rem",
-  fontWeight: "800",
-  marginBottom: "30px",
-  background: "linear-gradient(90deg, #00c6ff, #7b2ff7)",
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-};
-
-const formCardStyle = {
-  background: "#1a1a24",
-  border: "1px solid #2a2a3a",
-  borderRadius: "12px",
-  padding: "30px",
-  maxWidth: "600px",
-};
-
-const formTitleStyle = {
-  marginTop: 0,
-  marginBottom: "20px",
-  color: "#fff",
-};
-
-const labelStyle = {
-  display: "block",
-  color: "#ccc",
-  fontSize: "0.85rem",
-  marginBottom: "6px",
-  fontWeight: "600",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 14px",
-  marginBottom: "16px",
-  borderRadius: "8px",
-  border: "1px solid #2a2a3a",
-  background: "#0d0d0f",
-  color: "#fff",
-  fontSize: "0.95rem",
-  outline: "none",
-  boxSizing: "border-box",
-};
-
-const rowStyle = {
-  display: "flex",
-  gap: "12px",
-};
-
-const colStyle = {
-  flex: 1,
-};
-
-const btnStyle = {
-  padding: "12px 28px",
-  borderRadius: "30px",
-  border: "none",
-  background: "linear-gradient(90deg, #00c6ff, #7b2ff7)",
-  color: "#fff",
-  fontWeight: "700",
-  fontSize: "0.95rem",
-  cursor: "pointer",
-};
-
-const cancelBtnStyle = {
-  padding: "12px 28px",
-  borderRadius: "30px",
-  border: "1px solid #2a2a3a",
-  background: "transparent",
-  color: "#ccc",
-  fontWeight: "600",
-  fontSize: "0.95rem",
-  cursor: "pointer",
-};
-
-const errorStyle = {
-  background: "#3a1a1a",
-  color: "#ff6b6b",
-  padding: "10px 14px",
-  borderRadius: "8px",
-  fontSize: "0.9rem",
-  marginBottom: "16px",
-  border: "1px solid #5a2a2a",
-};
-
-const tableWrapStyle = {
-  background: "#1a1a24",
-  border: "1px solid #2a2a3a",
-  borderRadius: "12px",
-  overflow: "hidden",
-  overflowX: "auto",
-};
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  minWidth: "850px",
-};
-
-const thStyle = {
-  textAlign: "left",
-  padding: "14px 16px",
-  borderBottom: "1px solid #2a2a3a",
-  color: "#9a9aae",
-  fontSize: "0.85rem",
-  textTransform: "uppercase",
-};
-
-const tdStyle = {
-  padding: "14px 16px",
-  borderBottom: "1px solid #2a2a3a",
-  color: "#eee",
-  fontSize: "0.9rem",
-};
-
-const thumbStyle = {
-  width: "45px",
-  height: "45px",
-  objectFit: "cover",
-  borderRadius: "6px",
-};
-
-const statusActive = {
-  background: "#1a3a1a",
-  color: "#6bff6b",
-  padding: "4px 12px",
-  borderRadius: "12px",
-  fontSize: "0.8rem",
-  textTransform: "capitalize",
-};
-
-const statusInactive = {
-  background: "#3a3a1a",
-  color: "#ffd76b",
-  padding: "4px 12px",
-  borderRadius: "12px",
-  fontSize: "0.8rem",
-  textTransform: "capitalize",
-};
-
-const actionBtnStyle = {
-  padding: "6px 14px",
-  borderRadius: "6px",
-  border: "1px solid #2a2a3a",
-  background: "#0d0d0f",
-  color: "#00c6ff",
-  cursor: "pointer",
-  fontSize: "0.8rem",
-};
-
-const deleteBtnStyle = {
-  ...actionBtnStyle,
-  color: "#ff6b6b",
-};

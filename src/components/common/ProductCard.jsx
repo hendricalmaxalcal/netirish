@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
 import { AuthContext } from "../../context/AuthContext";
+import styles from "./ProductCard.module.css";
 
 export default function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
@@ -58,7 +59,6 @@ export default function ProductCard({ product }) {
     setTimeout(() => setAdded(false), 1500);
   };
 
-  // Save the intended item so it can be added automatically after login/register
   const goToAuth = (path) => {
     const pendingItem = isService
       ? buildItem({ notes: notes.trim(), preferredDate: preferredDate || null })
@@ -72,21 +72,21 @@ export default function ProductCard({ product }) {
 
   return (
     <>
-      <div style={cardStyle}>
-        <div style={imageWrapperStyle}>
+      <div className={styles.card}>
+        <div className={styles.imageWrapper}>
           {product.imageUrl ? (
-            <img src={product.imageUrl} alt={product.name} style={imageStyle} />
+            <img src={product.imageUrl} alt={product.name} className={styles.image} />
           ) : (
-            <div style={placeholderStyle}>No Image</div>
+            <div className={styles.placeholder}>No Image</div>
           )}
         </div>
-        <div style={{ padding: "16px" }}>
-          <span style={badgeStyle}>{product.category}</span>
-          <h3 style={{ margin: "10px 0 6px", color: "#fff" }}>{product.name}</h3>
-          <p style={descStyle}>{product.description}</p>
-          <p style={priceStyle}>Tsh {Number(product.price).toLocaleString()}</p>
+        <div className={styles.content}>
+          <span className={styles.badge}>{product.category}</span>
+          <h3 className={styles.name}>{product.name}</h3>
+          <p className={styles.desc}>{product.description}</p>
+          <p className={styles.price}>Tsh {Number(product.price).toLocaleString()}</p>
 
-          <button onClick={handleAddClick} style={addBtnStyle}>
+          <button onClick={handleAddClick} className={styles.addBtn}>
             {added ? "Added ✓" : isService ? "Request Service" : "Add to Cart"}
           </button>
         </div>
@@ -94,18 +94,18 @@ export default function ProductCard({ product }) {
 
       {/* Auth required modal */}
       {showAuthModal && (
-        <div style={overlayStyle} onClick={() => setShowAuthModal(false)}>
-          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginTop: 0, color: "#fff" }}>Login Required</h3>
-            <p style={{ color: "#9a9aae", fontSize: "0.9rem" }}>
+        <div className={styles.overlay} onClick={() => setShowAuthModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Login Required</h3>
+            <p className={styles.modalText}>
               Please login or create an account to {isService ? "request this service" : "add items to your cart"}.
             </p>
 
-            <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
-              <button onClick={() => goToAuth("/login")} style={addBtnStyle}>
+            <div className={styles.modalActions}>
+              <button onClick={() => goToAuth("/login")} className={styles.addBtn}>
                 Login
               </button>
-              <button onClick={() => goToAuth("/register")} style={cancelBtnStyle}>
+              <button onClick={() => goToAuth("/register")} className={styles.cancelBtn}>
                 Register
               </button>
             </div>
@@ -113,33 +113,34 @@ export default function ProductCard({ product }) {
         </div>
       )}
 
-      {/* Service request modal (logged-in users) */}
+      {/* Service request modal */}
       {showServiceModal && (
-        <div style={overlayStyle} onClick={() => setShowServiceModal(false)}>
-          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginTop: 0, color: "#fff" }}>Request: {product.name}</h3>
+        <div className={styles.overlay} onClick={() => setShowServiceModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Request: {product.name}</h3>
 
-            <label style={labelStyle}>Preferred Date (optional)</label>
+            <label className={styles.label}>Preferred Date (optional)</label>
             <input
               type="date"
               value={preferredDate}
               onChange={(e) => setPreferredDate(e.target.value)}
-              style={inputStyle}
+              className={styles.input}
             />
 
-            <label style={labelStyle}>Details / Notes</label>
+            <label className={styles.label}>Details / Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Describe what you need help with..."
-              style={{ ...inputStyle, minHeight: "80px", resize: "vertical" }}
+              className={styles.input}
+              style={{ minHeight: "80px", resize: "vertical" }}
             />
 
-            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-              <button onClick={handleServiceSubmit} style={addBtnStyle}>
+            <div className={styles.modalActionsTop}>
+              <button onClick={handleServiceSubmit} className={styles.addBtn}>
                 Add to Cart
               </button>
-              <button onClick={() => setShowServiceModal(false)} style={cancelBtnStyle}>
+              <button onClick={() => setShowServiceModal(false)} className={styles.cancelBtn}>
                 Cancel
               </button>
             </div>
@@ -149,123 +150,3 @@ export default function ProductCard({ product }) {
     </>
   );
 }
-
-/* ---------- Styles ---------- */
-
-const cardStyle = {
-  background: "#1a1a24",
-  border: "1px solid #2a2a3a",
-  borderRadius: "12px",
-  overflow: "hidden",
-  width: "260px",
-};
-
-const imageWrapperStyle = {
-  width: "100%",
-  height: "180px",
-  backgroundColor: "#25253a",
-};
-
-const imageStyle = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-};
-
-const placeholderStyle = {
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "#555",
-};
-
-const badgeStyle = {
-  fontSize: "0.75rem",
-  background: "#2a2a3a",
-  color: "#00c6ff",
-  padding: "3px 10px",
-  borderRadius: "12px",
-  textTransform: "capitalize",
-};
-
-const descStyle = {
-  color: "#9a9aae",
-  fontSize: "0.9rem",
-  minHeight: "40px",
-};
-
-const priceStyle = {
-  fontWeight: "bold",
-  fontSize: "1.15rem",
-  color: "#7b2ff7",
-  marginTop: "8px",
-  marginBottom: "12px",
-};
-
-const addBtnStyle = {
-  width: "100%",
-  padding: "10px",
-  borderRadius: "20px",
-  border: "none",
-  background: "linear-gradient(90deg, #00c6ff, #7b2ff7)",
-  color: "#fff",
-  fontWeight: "700",
-  fontSize: "0.9rem",
-  cursor: "pointer",
-};
-
-const cancelBtnStyle = {
-  flex: 1,
-  padding: "10px",
-  borderRadius: "20px",
-  border: "1px solid #2a2a3a",
-  background: "transparent",
-  color: "#ccc",
-  fontWeight: "600",
-  cursor: "pointer",
-};
-
-const overlayStyle = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  background: "rgba(0,0,0,0.6)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-};
-
-const modalStyle = {
-  background: "#1a1a24",
-  border: "1px solid #2a2a3a",
-  borderRadius: "12px",
-  padding: "24px",
-  width: "100%",
-  maxWidth: "400px",
-};
-
-const labelStyle = {
-  display: "block",
-  color: "#ccc",
-  fontSize: "0.85rem",
-  marginBottom: "6px",
-  marginTop: "12px",
-  fontWeight: "600",
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 14px",
-  borderRadius: "8px",
-  border: "1px solid #2a2a3a",
-  background: "#0d0d0f",
-  color: "#fff",
-  fontSize: "0.9rem",
-  outline: "none",
-  boxSizing: "border-box",
-};

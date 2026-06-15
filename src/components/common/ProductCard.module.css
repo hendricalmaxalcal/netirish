@@ -1,0 +1,148 @@
+.card {
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 260px;
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 180px;
+  background-color: #25253a;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+}
+
+.content {
+  padding: 16px;
+}
+
+.badge {
+  font-size: 0.75rem;
+  background: #2a2a3a;
+  color: #00c6ff;
+  padding: 3px 10px;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.name {
+  margin: 10px 0 6px;
+  color: #fff;
+}
+
+.desc {
+  color: #9a9aae;
+  font-size: 0.9rem;
+  min-height: 40px;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 1.15rem;
+  color: #7b2ff7;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.addBtn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #2a2a3a;
+  background: transparent;
+  color: #ccc;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.modalTitle {
+  margin-top: 0;
+  color: #fff;
+}
+
+.modalText {
+  color: #9a9aae;
+  font-size: 0.9rem;
+}
+
+.label {
+  display: block;
+  color: #ccc;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #2a2a3a;
+  background: #0d0d0f;
+  color: #fff;
+  font-size: 0.9rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.modalActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.modalActionsTop {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}

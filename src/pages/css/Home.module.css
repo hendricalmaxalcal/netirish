@@ -1,0 +1,87 @@
+.page {
+  background-color: #0d0d0f;
+  color: #f5f5f5;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-bottom: 1px solid #2a2a3a;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0 0 15px;
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  color: #b0b0c0;
+  margin-bottom: 30px;
+}
+
+.heroBtn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.productsSection {
+  padding: 60px 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.filterRow {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.filterBtn {
+  padding: 10px 22px;
+  border-radius: 20px;
+  border: 1px solid #444;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.filterBtnActive {
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+
+.mutedText {
+  text-align: center;
+  color: #888;
+}

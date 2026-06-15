@@ -31,31 +31,21 @@ export default function Home() {
 
   return (
     <div style={pageStyle}>
-      {/* Hero Section */}
       <section style={heroStyle}>
         <h1 style={heroTitleStyle}>Welcome to NetIrish</h1>
         <p style={heroSubtitleStyle}>
           Quality products and services, delivered with excellence.
         </p>
-        <a href="#products" style={heroBtnStyle}>
-          Shop Now
-        </a>
+        <a href="#products" style={heroBtnStyle}>Shop Now</a>
       </section>
 
-      {/* Products Section */}
       <section id="products" style={productsSectionStyle}>
         <h2 style={sectionTitleStyle}>Our Offerings</h2>
 
         <div style={filterRowStyle}>
-          <button onClick={() => setFilter("all")} style={filterBtn(filter === "all")}>
-            All
-          </button>
-          <button onClick={() => setFilter("product")} style={filterBtn(filter === "product")}>
-            Products
-          </button>
-          <button onClick={() => setFilter("service")} style={filterBtn(filter === "service")}>
-            Services
-          </button>
+          <button onClick={() => setFilter("all")} style={filterBtn(filter === "all")}>All</button>
+          <button onClick={() => setFilter("product")} style={filterBtn(filter === "product")}>Products</button>
+          <button onClick={() => setFilter("service")} style={filterBtn(filter === "service")}>Services</button>
         </div>
 
         {loading ? (
@@ -73,8 +63,6 @@ export default function Home() {
     </div>
   );
 }
-
-/* ---------- Styles ---------- */
 
 const pageStyle = {
   backgroundColor: "#0d0d0f",
@@ -114,7 +102,6 @@ const heroBtnStyle = {
   textDecoration: "none",
   fontWeight: "600",
   fontSize: "1rem",
-  transition: "opacity 0.2s",
 };
 
 const productsSectionStyle = {
@@ -145,7 +132,6 @@ const filterBtn = (active) => ({
   cursor: "pointer",
   fontWeight: "600",
   fontSize: "0.9rem",
-  transition: "all 0.2s",
 });
 
 const gridStyle = {

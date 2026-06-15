@@ -24,7 +24,6 @@ const cardStyle = {
   borderRadius: "12px",
   overflow: "hidden",
   width: "260px",
-  transition: "transform 0.2s, box-shadow 0.2s",
 };
 
 const imageWrapperStyle = {

@@ -13,19 +13,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
         setUser(currentUser);
-        setRole(docSnap.exists() ? docSnap.data().role : "customer");
-      }
-      else {
+        try {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          setRole(docSnap.exists() ? docSnap.data().role || "customer" : "customer");
+        } catch (err) {
+          console.error("Error fetching user role:", err);
+          setRole("customer");
+        }
+      } else {
         setUser(null);
         setRole(null);
       }
       setLoading(false);
-        });
-        return () => unsub();
-    }, []);
+    });
+
+    return () => unsub();
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, role, loading }}>

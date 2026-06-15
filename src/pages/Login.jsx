@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { CartContext } from "../context/CartContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +21,19 @@ export default function Login() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Restore pending cart item if any
+      const pending = localStorage.getItem("pendingCartItem");
+      if (pending) {
+        try {
+          addToCart(JSON.parse(pending));
+        } catch (e) {
+          console.error("Failed to restore pending cart item:", e);
+        }
+        localStorage.removeItem("pendingCartItem");
+        navigate("/cart");
+        return;
+      }
 
       const userDocRef = doc(db, "users", user.uid);
       const userDocSnap = await getDoc(userDocRef);
@@ -76,8 +91,6 @@ export default function Login() {
     </div>
   );
 }
-
-/* ---------- Styles ---------- */
 
 const pageStyle = {
   minHeight: "calc(100vh - 70px)",

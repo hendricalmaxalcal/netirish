@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { CartContext } from "../context/CartContext";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,6 +70,19 @@ export default function Register() {
         role: "customer",
         createdAt: new Date(),
       });
+
+      // Restore pending cart item if any
+      const pending = localStorage.getItem("pendingCartItem");
+      if (pending) {
+        try {
+          addToCart(JSON.parse(pending));
+        } catch (e) {
+          console.error("Failed to restore pending cart item:", e);
+        }
+        localStorage.removeItem("pendingCartItem");
+        navigate("/cart");
+        return;
+      }
 
       navigate("/dashboard");
     } catch (err) {
@@ -200,8 +215,6 @@ export default function Register() {
     </div>
   );
 }
-
-/* ---------- Styles ---------- */
 
 const pageStyle = {
   minHeight: "calc(100vh - 70px)",

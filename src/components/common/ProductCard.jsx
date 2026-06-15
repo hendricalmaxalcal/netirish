@@ -1,42 +1,52 @@
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CartContext } from "../../context/CartContext";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function ProductCard({ product }) {
   const { addToCart } = useContext(CartContext);
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [notes, setNotes] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [added, setAdded] = useState(false);
 
   const isService = product.category === "service";
 
+  const buildItem = (extra = {}) => ({
+    productId: product.id,
+    name: product.name,
+    price: Number(product.price),
+    qty: 1,
+    category: product.category,
+    imageUrl: product.imageUrl || "",
+    ...extra,
+  });
+
   const handleAddClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     if (isService) {
       setShowServiceModal(true);
     } else {
-      addToCart({
-        productId: product.id,
-        name: product.name,
-        price: Number(product.price),
-        qty: 1,
-        category: product.category,
-        imageUrl: product.imageUrl || "",
-      });
+      addToCart(buildItem());
       flashAdded();
     }
   };
 
   const handleServiceSubmit = () => {
-    addToCart({
-      productId: product.id,
-      name: product.name,
-      price: Number(product.price),
-      qty: 1,
-      category: "service",
-      imageUrl: product.imageUrl || "",
-      notes: notes.trim(),
-      preferredDate: preferredDate || null,
-    });
+    addToCart(
+      buildItem({
+        notes: notes.trim(),
+        preferredDate: preferredDate || null,
+      })
+    );
     setShowServiceModal(false);
     setNotes("");
     setPreferredDate("");
@@ -46,6 +56,18 @@ export default function ProductCard({ product }) {
   const flashAdded = () => {
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
+  };
+
+  // Save the intended item so it can be added automatically after login/register
+  const goToAuth = (path) => {
+    const pendingItem = isService
+      ? buildItem({ notes: notes.trim(), preferredDate: preferredDate || null })
+      : buildItem();
+
+    localStorage.setItem("pendingCartItem", JSON.stringify(pendingItem));
+    setShowAuthModal(false);
+    setShowServiceModal(false);
+    navigate(path);
   };
 
   return (
@@ -70,7 +92,28 @@ export default function ProductCard({ product }) {
         </div>
       </div>
 
-      {/* Service request modal */}
+      {/* Auth required modal */}
+      {showAuthModal && (
+        <div style={overlayStyle} onClick={() => setShowAuthModal(false)}>
+          <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ marginTop: 0, color: "#fff" }}>Login Required</h3>
+            <p style={{ color: "#9a9aae", fontSize: "0.9rem" }}>
+              Please login or create an account to {isService ? "request this service" : "add items to your cart"}.
+            </p>
+
+            <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
+              <button onClick={() => goToAuth("/login")} style={addBtnStyle}>
+                Login
+              </button>
+              <button onClick={() => goToAuth("/register")} style={cancelBtnStyle}>
+                Register
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Service request modal (logged-in users) */}
       {showServiceModal && (
         <div style={overlayStyle} onClick={() => setShowServiceModal(false)}>
           <div style={modalStyle} onClick={(e) => e.stopPropagation()}>

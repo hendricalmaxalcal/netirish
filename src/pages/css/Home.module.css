@@ -39,7 +39,7 @@
   font-size: 1rem;
 }
 
-.productsSection {
+.section {
   padding: 60px 30px;
   max-width: 1200px;
   margin: 0 auto;
@@ -51,30 +51,89 @@
   text-align: center;
 }
 
-.filterRow {
+.tabs {
   display: flex;
   justify-content: center;
   gap: 12px;
   margin-bottom: 40px;
+  border-bottom: 1px solid #2a2a3a;
+  padding-bottom: 12px;
+}
+
+.tabBtn {
+  padding: 10px 28px;
+  border-radius: 20px;
+  border: 1px solid #2a2a3a;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.tabBtnActive {
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+  border: none;
+}
+
+.subCategoryFilter {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
 }
 
 .filterBtn {
-  padding: 10px 22px;
+  padding: 8px 18px;
   border-radius: 20px;
   border: 1px solid #444;
   background: transparent;
   color: #ccc;
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .filterBtnActive {
   background: linear-gradient(90deg, #00c6ff, #7b2ff7);
   color: #fff;
+  border: none;
+}
+
+.brandSection {
+  margin-bottom: 48px;
+}
+
+.brandHeading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00c6ff;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a3a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandHeading::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, #00c6ff, #7b2ff7);
+  border-radius: 2px;
 }
 
 .grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.servicesGrid {
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
@@ -84,4 +143,5 @@
 .mutedText {
   text-align: center;
   color: #888;
+  margin-top: 40px;
 }

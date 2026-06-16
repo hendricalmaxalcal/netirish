@@ -183,3 +183,157 @@
   font-weight: 600;
   text-transform: capitalize;
 }
+.subCategoryFilter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #444;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.filterBtnActive {
+  background: linear-gradient(90deg, #00c6ff, #7b2ff7);
+  color: #fff;
+  border: none;
+}
+
+.brandSection {
+  margin-bottom: 48px;
+}
+
+.brandHeading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #00c6ff;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2a2a3a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandHeading::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background: linear-gradient(180deg, #00c6ff, #7b2ff7);
+  border-radius: 2px;
+}
+
+.servicesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
+.searchWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto 30px;
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  border-radius: 30px;
+  padding: 10px 20px;
+}
+
+.searchIcon {
+  color: #9a9aae;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.searchInput::placeholder {
+  color: #9a9aae;
+}
+
+.clearBtn {
+  background: transparent;
+  border: none;
+  color: #9a9aae;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.clearBtn:hover {
+  color: #fff;
+}
+
+.searchResults {
+  margin-bottom: 30px;
+}
+
+.searchResultsTitle {
+  font-size: 1rem;
+  color: #9a9aae;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.searchResultsTitle span {
+  color: #00c6ff;
+  font-weight: 700;
+}
+
+.searchResultsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.searchCategory {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #7b2ff7;
+  margin: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchCategory::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(180deg, #7b2ff7, #00c6ff);
+  border-radius: 2px;
+}
+
+.noResults {
+  text-align: center;
+  color: #888;
+  margin-top: 20px;
+  font-size: 1rem;
+}
+
+.noResults span {
+  color: #00c6ff;
+}

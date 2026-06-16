@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { db, storage } from "../../firebase/config";
+import { db } from "../../firebase/config";
 import {
   collection,
   addDoc,
@@ -9,8 +9,10 @@ import {
   deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import styles from "../css/ManageProducts.module.css";
+
+const CLOUDINARY_CLOUD_NAME = "dntgythzj";
+const CLOUDINARY_UPLOAD_PRESET = "netirish_preset";
 
 const SUBCATEGORIES = [
   { value: "computers_laptops", label: "Computers & Laptops" },
@@ -18,6 +20,25 @@ const SUBCATEGORIES = [
   { value: "accessories", label: "Accessories" },
   { value: "routers", label: "Routers" },
 ];
+
+const uploadImageToCloudinary = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    { method: "POST", body: formData }
+  );
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || "Image upload failed");
+  }
+
+  const data = await res.json();
+  return data.secure_url;
+};
 
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
@@ -30,6 +51,7 @@ export default function ManageProducts() {
     brand: "",
   });
   const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editingHasImage, setEditingHasImage] = useState(false);
@@ -47,9 +69,24 @@ export default function ManageProducts() {
     setFormError("");
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
   const resetForm = () => {
-    setForm({ name: "", description: "", price: "", category: "product", subCategory: "", brand: "" });
+    setForm({
+      name: "",
+      description: "",
+      price: "",
+      category: "product",
+      subCategory: "",
+      brand: "",
+    });
     setImageFile(null);
+    setImagePreview(null);
     setEditingId(null);
     setEditingHasImage(false);
     setFormError("");
@@ -61,19 +98,29 @@ export default function ManageProducts() {
 
     if (form.category === "product") {
       const hasImage = imageFile || (editingId && editingHasImage);
-      if (!hasImage) { setFormError("An image is required for products."); return; }
-      if (!form.subCategory) { setFormError("Please select a sub-category."); return; }
-      if (!form.brand.trim()) { setFormError("Please enter a brand."); return; }
+      if (!hasImage) {
+        setFormError("An image is required for products.");
+        return;
+      }
+      if (!form.subCategory) {
+        setFormError("Please select a sub-category.");
+        return;
+      }
+      if (!form.brand.trim()) {
+        setFormError("Please enter a brand.");
+        return;
+      }
     }
 
     setUploading(true);
 
     try {
       let imageUrl = null;
+
       if (imageFile) {
-        const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        console.log("Uploading to Cloudinary...");
+        imageUrl = await uploadImageToCloudinary(imageFile);
+        console.log("Upload success:", imageUrl);
       }
 
       const isProduct = form.category === "product";
@@ -102,8 +149,10 @@ export default function ManageProducts() {
           createdAt: serverTimestamp(),
         });
       }
+
       resetForm();
     } catch (err) {
+      console.error("Error saving:", err);
       setFormError("Error saving: " + err.message);
     } finally {
       setUploading(false);
@@ -122,6 +171,7 @@ export default function ManageProducts() {
     setEditingId(product.id);
     setEditingHasImage(!!product.imageUrl);
     setImageFile(null);
+    setImagePreview(product.imageUrl || null);
     setFormError("");
   };
 
@@ -147,7 +197,9 @@ export default function ManageProducts() {
       <h1 className={styles.title}>Manage Products</h1>
 
       <div className={styles.formCard}>
-        <h3 className={styles.formTitle}>{editingId ? "Edit Item" : "Add New Item"}</h3>
+        <h3 className={styles.formTitle}>
+          {editingId ? "Edit Item" : "Add New Item"}
+        </h3>
 
         {formError && <p className={styles.error}>{formError}</p>}
 
@@ -214,7 +266,9 @@ export default function ManageProducts() {
                 >
                   <option value="">Select sub-category</option>
                   {SUBCATEGORIES.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -241,23 +295,48 @@ export default function ManageProducts() {
               <span className={styles.optionalMark}>(optional)</span>
             )}
             {editingId && (
-              <span className={styles.optionalMark}> — leave empty to keep current</span>
+              <span className={styles.optionalMark}>
+                {" "}— leave empty to keep current
+              </span>
             )}
           </label>
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setImageFile(e.target.files[0])}
+            onChange={handleImageChange}
             className={styles.input}
             style={{ padding: "10px" }}
           />
 
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              style={{
+                width: "120px",
+                height: "120px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                border: "1px solid #2a2a3a",
+              }}
+            />
+          )}
+
           <div className={styles.formActions}>
-            <button type="submit" disabled={uploading} className={styles.btn}>
-              {uploading ? "Saving..." : editingId ? "Update Item" : "Add Item"}
+            <button
+              type="submit"
+              disabled={uploading}
+              className={styles.btn}
+            >
+              {uploading ? "Uploading..." : editingId ? "Update Item" : "Add Item"}
             </button>
             {editingId && (
-              <button type="button" onClick={resetForm} className={styles.cancelBtn}>
+              <button
+                type="button"
+                onClick={resetForm}
+                className={styles.cancelBtn}
+              >
                 Cancel
               </button>
             )}
@@ -286,7 +365,11 @@ export default function ManageProducts() {
                 <tr key={p.id}>
                   <td className={styles.td}>
                     {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.name} className={styles.thumb} />
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className={styles.thumb}
+                      />
                     ) : (
                       <span className={styles.noImage}>No image</span>
                     )}
@@ -297,19 +380,40 @@ export default function ManageProducts() {
                     {p.subCategory ? subCategoryLabel(p.subCategory) : "—"}
                   </td>
                   <td className={styles.td}>{p.brand || "—"}</td>
-                  <td className={styles.td}>Tsh {Number(p.price).toLocaleString()}</td>
                   <td className={styles.td}>
-                    <span className={p.status === "active" ? styles.statusActive : styles.statusInactive}>
+                    Tsh {Number(p.price).toLocaleString()}
+                  </td>
+                  <td className={styles.td}>
+                    <span
+                      className={
+                        p.status === "active"
+                          ? styles.statusActive
+                          : styles.statusInactive
+                      }
+                    >
                       {p.status}
                     </span>
                   </td>
                   <td className={styles.td}>
                     <div className={styles.tableActions}>
-                      <button onClick={() => handleEdit(p)} className={styles.actionBtn}>Edit</button>
-                      <button onClick={() => toggleStatus(p)} className={styles.actionBtn}>
+                      <button
+                        onClick={() => handleEdit(p)}
+                        className={styles.actionBtn}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => toggleStatus(p)}
+                        className={styles.actionBtn}
+                      >
                         {p.status === "active" ? "Hide" : "Show"}
                       </button>
-                      <button onClick={() => handleDelete(p.id)} className={styles.deleteBtn}>Delete</button>
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className={styles.deleteBtn}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </td>
                 </tr>

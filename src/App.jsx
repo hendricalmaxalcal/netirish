@@ -5,11 +5,13 @@ import { AdminRoute } from "./routes/AdminRoute";
 import { CartProvider } from "./context/CartContext";
 
 import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProductDetails from "./pages/ProductDetails";
 import VerifyEmail from "./pages/VerifyEmail";
+import About from "./pages/About";
 
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
 import Cart from "./pages/customer/Cart";
@@ -27,6 +29,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -65,6 +68,7 @@ function App() {
               </div>
             } />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </CartProvider>
     </AuthProvider>

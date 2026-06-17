@@ -1,4 +1,3 @@
-
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -23,6 +22,7 @@ export default function Navbar() {
 
       <div className={styles.linksWrap}>
         <Link to="/" className={styles.link}>Home</Link>
+        <Link to="/about" className={styles.link}>About</Link>
 
         {!loading && !user && (
           <>

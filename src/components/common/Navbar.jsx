@@ -1,3 +1,4 @@
+
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -36,6 +37,7 @@ export default function Navbar() {
             <Link to="/cart" className={styles.link}>
               Cart {cartCount > 0 && `(${cartCount})`}
             </Link>
+            <Link to="/profile" className={styles.link}>Profile</Link>
           </>
         )}
 
@@ -48,7 +50,9 @@ export default function Navbar() {
         )}
 
         {!loading && user && (
-          <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
+          <button onClick={handleLogout} className={styles.logoutBtn}>
+            Logout
+          </button>
         )}
       </div>
     </nav>

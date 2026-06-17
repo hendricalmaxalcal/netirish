@@ -1,9 +1,12 @@
+
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebase/config";
 import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  signOut,
+  deleteUser,
 } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { CartContext } from "../context/CartContext";
@@ -26,9 +29,33 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
+      // Check if Firestore user document exists
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        // Firestore doc deleted but Auth account still exists
+        // Delete the Auth account automatically so they can re-register
+        try {
+          await deleteUser(user);
+        } catch (deleteErr) {
+          console.error("Could not auto-delete auth account:", deleteErr);
+        }
+        await signOut(auth);
+        setError(
+          "This account has been deleted. You can now register again with this email."
+        );
+        return;
+      }
+
+      // Restore pending cart item if any
       const pending = localStorage.getItem("pendingCartItem");
       if (pending) {
         try {
@@ -41,16 +68,22 @@ export default function Login() {
         return;
       }
 
-      const userDocRef = doc(db, "users", user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-
-      if (userDocSnap.exists() && userDocSnap.data().role === "admin") {
+      // Role-based redirect
+      if (userDocSnap.data().role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.message);
+      if (
+        err.code === "auth/user-not-found" ||
+        err.code === "auth/wrong-password" ||
+        err.code === "auth/invalid-credential"
+      ) {
+        setError("Invalid email or password.");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -61,7 +94,7 @@ export default function Login() {
     setSuccess("");
 
     if (!email.trim()) {
-      setError("Please enter your email address above first, then click Forgot password.");
+      setError("Please enter your email address above first.");
       return;
     }
 
@@ -69,7 +102,9 @@ export default function Login() {
 
     try {
       await sendPasswordResetEmail(auth, email.trim());
-      setSuccess(`Password reset email sent to ${email}. Check your inbox (and spam folder).`);
+      setSuccess(
+        `Password reset email sent to ${email}. Check your inbox and spam folder.`
+      );
     } catch (err) {
       if (err.code === "auth/user-not-found") {
         setError("No account found with this email address.");
@@ -120,7 +155,11 @@ export default function Login() {
             {resetLoading ? "Sending..." : "Forgot password?"}
           </button>
 
-          <button type="submit" disabled={loading} className={styles.btn}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles.btn}
+          >
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>

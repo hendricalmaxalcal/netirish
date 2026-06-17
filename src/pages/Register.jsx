@@ -1,7 +1,12 @@
+
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { auth, db } from "../firebase/config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { CartContext } from "../context/CartContext";
 import styles from "./css/Register.module.css";
@@ -72,6 +77,11 @@ export default function Register() {
         createdAt: new Date(),
       });
 
+      // Send verification email
+      await sendEmailVerification(user);
+      console.log("✅ Verification email sent to:", user.email);
+
+      // Restore pending cart item if any
       const pending = localStorage.getItem("pendingCartItem");
       if (pending) {
         try {
@@ -80,13 +90,23 @@ export default function Register() {
           console.error("Failed to restore pending cart item:", e);
         }
         localStorage.removeItem("pendingCartItem");
-        navigate("/cart");
+        navigate("/verify-email");
         return;
       }
 
-      navigate("/dashboard");
+      navigate("/verify-email");
     } catch (err) {
-      setError(err.message);
+      console.error("Register error:", err.code, err.message);
+
+      if (err.code === "auth/email-already-in-use") {
+        setError("This email is already registered. Try logging in instead.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Please enter a valid email address.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password is too weak. Please use at least 6 characters.");
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -204,13 +224,18 @@ export default function Register() {
             placeholder="••••••••"
           />
 
-          <button type="submit" disabled={loading} className={styles.btn}>
+          <button
+            type="submit"
+            disabled={loading}
+            className={styles.btn}
+          >
             {loading ? "Creating account..." : "Register"}
           </button>
         </form>
 
         <p className={styles.footerText}>
-          Already have an account? <Link to="/login" className={styles.link}>Login</Link>
+          Already have an account?{" "}
+          <Link to="/login" className={styles.link}>Login</Link>
         </p>
       </div>
     </div>

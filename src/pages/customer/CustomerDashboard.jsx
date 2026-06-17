@@ -1,7 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { db } from "../../firebase/config";
 import { AuthContext } from "../../context/AuthContext";
-import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  orderBy,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import ProductCard from "../../components/common/ProductCard";
 import styles from "../css/CustomerDashboard.module.css";
 
@@ -29,6 +37,7 @@ export default function CustomerDashboard() {
   const [orders, setOrders] = useState([]);
   const [subCategoryFilter, setSubCategoryFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
     const q = query(
@@ -67,10 +76,24 @@ export default function CustomerDashboard() {
     return () => unsub();
   }, [user]);
 
+  const handleCancelOrder = async (orderId) => {
+    if (!confirm("Are you sure you want to cancel this order?")) return;
+    setCancellingId(orderId);
+    try {
+      await updateDoc(doc(db, "orders", orderId), {
+        status: "cancelled",
+      });
+    } catch (err) {
+      console.error("Error cancelling order:", err);
+      alert("Failed to cancel order. Please try again.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   const isSearching = searchQuery.trim().length > 0;
   const searchLower = searchQuery.toLowerCase();
 
-  // Search results
   const searchedProducts = products.filter(
     (p) =>
       p.name?.toLowerCase().includes(searchLower) ||
@@ -87,12 +110,11 @@ export default function CustomerDashboard() {
 
   const totalSearchResults = searchedProducts.length + searchedServices.length;
 
-  // Filter by sub-category
-  const filteredProducts = subCategoryFilter === "all"
-    ? products
-    : products.filter((p) => p.subCategory === subCategoryFilter);
+  const filteredProducts =
+    subCategoryFilter === "all"
+      ? products
+      : products.filter((p) => p.subCategory === subCategoryFilter);
 
-  // Group by brand
   const groupedByBrand = filteredProducts.reduce((acc, product) => {
     const brand = product.brand || "Other";
     if (!acc[brand]) acc[brand] = [];
@@ -125,9 +147,7 @@ export default function CustomerDashboard() {
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
-            if (e.target.value.trim().length > 0) {
-              setActiveTab("products");
-            }
+            if (e.target.value.trim().length > 0) setActiveTab("products");
           }}
           placeholder="Search products, services, brands..."
           className={styles.searchInput}
@@ -175,7 +195,6 @@ export default function CustomerDashboard() {
                   </div>
                 </>
               )}
-
               {searchedServices.length > 0 && (
                 <>
                   <p className={styles.searchCategory}>
@@ -251,7 +270,9 @@ export default function CustomerDashboard() {
           {activeTab === "services" && (
             <div>
               {services.length === 0 ? (
-                <p className={styles.mutedText}>No services available right now.</p>
+                <p className={styles.mutedText}>
+                  No services available right now.
+                </p>
               ) : (
                 <div className={styles.servicesGrid}>
                   {services.map((s) => (
@@ -285,7 +306,8 @@ export default function CustomerDashboard() {
                         <span
                           className={
                             styles[
-                              STATUS_BADGE[order.status] || "statusBadgePending"
+                              STATUS_BADGE[order.status] ||
+                                "statusBadgePending"
                             ]
                           }
                         >
@@ -298,7 +320,10 @@ export default function CustomerDashboard() {
                           <div key={idx} className={styles.itemRow}>
                             <span>{item.name} × {item.qty}</span>
                             <span>
-                              Tsh {Number(item.price * item.qty).toLocaleString()}
+                              Tsh{" "}
+                              {Number(
+                                item.price * item.qty
+                              ).toLocaleString()}
                             </span>
                           </div>
                         ))}
@@ -306,8 +331,30 @@ export default function CustomerDashboard() {
 
                       <div className={styles.orderFooter}>
                         <p className={styles.total}>
-                          Total: Tsh {Number(order.total).toLocaleString()}
+                          Total: Tsh{" "}
+                          {Number(order.total).toLocaleString()}
                         </p>
+
+                        {order.status === "pending" && (
+                          <button
+                            onClick={() => handleCancelOrder(order.id)}
+                            disabled={cancellingId === order.id}
+                            style={{
+                              padding: "6px 16px",
+                              borderRadius: "20px",
+                              border: "1px solid #ff6b6b",
+                              background: "transparent",
+                              color: "#ff6b6b",
+                              fontSize: "0.85rem",
+                              fontWeight: "600",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {cancellingId === order.id
+                              ? "Cancelling..."
+                              : "Cancel Order"}
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -1,4 +1,7 @@
 import styles from "./css/About.module.css";
+import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube, FaTiktok, FaWhatsapp, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 
 export default function About() {
   return (
@@ -35,39 +38,46 @@ export default function About() {
 
         <h2 className={styles.sectionTitle}>Contact Us</h2>
         <div className={styles.contactGrid}>
-
           <div className={styles.contactCard}>
-            <span className={styles.contactIcon}>📞</span>
+            <span className={styles.contactIcon}>
+              <FaPhone size={22} color="#00c6ff" />
+            </span>
             <div>
               <p className={styles.contactLabel}>Phone</p>
-              <a href="tel:+255700000000" className={styles.contactValue}>
-                +255 700 000 000
+              <a href="tel:+255685635835" className={styles.contactValue}>
+                +255 685 635 835
               </a>
             </div>
           </div>
 
           <div className={styles.contactCard}>
-            <span className={styles.contactIcon}>💬</span>
+            <span className={styles.contactIcon}>
+              <FaWhatsapp size={22} color="#25D366" />
+            </span>
             <div>
               <p className={styles.contactLabel}>WhatsApp</p>
-              <a href="https://wa.me/255700000000" target="_blank" rel="noreferrer" className={styles.contactValue}>
-                +255 700 000 000
+              <a href="https://wa.me/255685635835" target="_blank" rel="noreferrer" className={styles.contactValue}>
+                +255 685 635 835
               </a>
             </div>
           </div>
 
           <div className={styles.contactCard}>
-            <span className={styles.contactIcon}>📧</span>
+            <span className={styles.contactIcon}>
+              <MdEmail size={22} color="#EA4335" />
+            </span>
             <div>
               <p className={styles.contactLabel}>Email</p>
-              <a href="mailto:info@netirish.com" className={styles.contactValue}>
-                info@netirish.com
+              <a href="mailto:netirishcompany@gmail.com" className={styles.contactValue}>
+                netirishcompany@gmail.com
               </a>
             </div>
           </div>
 
           <div className={styles.contactCard}>
-            <span className={styles.contactIcon}>📍</span>
+            <span className={styles.contactIcon}>
+              <FaMapMarkerAlt size={22} color="#EA4335" />
+            </span>
             <div>
               <p className={styles.contactLabel}>Address</p>
               <span className={styles.contactValue}>
@@ -75,44 +85,36 @@ export default function About() {
               </span>
             </div>
           </div>
-
         </div>
 
         <hr className={styles.divider} />
 
         <h2 className={styles.sectionTitle}>Follow Us</h2>
         <div className={styles.socialGrid}>
-
           <a href="https://facebook.com/netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>📘</span>
+            <FaFacebook size={22} color="#1877F2" />
             Facebook
           </a>
-
           <a href="https://instagram.com/netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>📸</span>
+            <FaInstagram size={22} color="#E1306C" />
             Instagram
           </a>
-
           <a href="https://twitter.com/netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>🐦</span>
+            <FaXTwitter size={22} color="#fff" />
             Twitter / X
           </a>
-
           <a href="https://linkedin.com/company/netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>💼</span>
+            <FaLinkedin size={22} color="#0A66C2" />
             LinkedIn
           </a>
-
           <a href="https://youtube.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>▶️</span>
+            <FaYoutube size={22} color="#FF0000" />
             YouTube
           </a>
-
           <a href="https://tiktok.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialCard}>
-            <span className={styles.socialIcon}>🎵</span>
+            <FaTiktok size={22} color="#fff" />
             TikTok
           </a>
-
         </div>
       </section>
     </div>

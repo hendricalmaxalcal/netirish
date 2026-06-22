@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
+import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube, FaTiktok, FaWhatsapp, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+import { MdEmail } from "react-icons/md";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -7,8 +10,6 @@ export default function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.grid}>
-
-        {/* Brand */}
         <div className={styles.col}>
           <p className={styles.brand}>NetIrish</p>
           <p className={styles.tagline}>
@@ -17,7 +18,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Quick Links */}
         <div className={styles.col}>
           <h3>Quick Links</h3>
           <ul className={styles.linkList}>
@@ -28,39 +28,49 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Contact */}
         <div className={styles.col}>
           <h3>Contact Us</h3>
-          <a href="tel:+255700000000" className={styles.contactItem}>
-            📞 +255 700 000 000
+          <a href="tel:+255685635835" className={styles.contactItem}>
+            <FaPhone size={14} color="#00c6ff" /> +255 685 635 835
           </a>
-          <a href="https://wa.me/255700000000" target="_blank" rel="noreferrer" className={styles.contactItem}>
-            💬 WhatsApp
+          <a href="https://wa.me/255685635835" target="_blank" rel="noreferrer" className={styles.contactItem}>
+            <FaWhatsapp size={14} color="#25D366" /> WhatsApp
           </a>
-          <a href="mailto:info@netirish.com" className={styles.contactItem}>
-            📧 info@netirish.com
+          <a href="mailto:netirishcompany@gmail.com" className={styles.contactItem}>
+            <MdEmail size={14} color="#EA4335" /> netirishcompany@gmail.com
           </a>
           <span className={styles.contactItem}>
-            📍 Dar es Salaam, Tanzania
+            <FaMapMarkerAlt size={14} color="#EA4335" /> Dar es Salaam, Tanzania
           </span>
         </div>
 
-        {/* Social Media */}
         <div className={styles.col}>
           <h3>Follow Us</h3>
           <div className={styles.socialRow}>
-            <a href="https://facebook.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Facebook">📘</a>
-            <a href="https://instagram.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Instagram">📸</a>
-            <a href="https://twitter.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Twitter/X">🐦</a>
-            <a href="https://linkedin.com/company/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="LinkedIn">💼</a>
-            <a href="https://youtube.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="YouTube">▶️</a>
-            <a href="https://tiktok.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="TikTok">🎵</a>
+            <a href="https://facebook.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Facebook">
+              <FaFacebook size={18} color="#1877F2" />
+            </a>
+            <a href="https://instagram.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Instagram">
+              <FaInstagram size={18} color="#E1306C" />
+            </a>
+            <a href="https://twitter.com/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="Twitter/X">
+              <FaXTwitter size={18} color="#fff" />
+            </a>
+            <a href="https://linkedin.com/company/netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="LinkedIn">
+              <FaLinkedin size={18} color="#0A66C2" />
+            </a>
+            <a href="https://youtube.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="YouTube">
+              <FaYoutube size={18} color="#FF0000" />
+            </a>
+            <a href="https://tiktok.com/@netirish" target="_blank" rel="noreferrer" className={styles.socialBtn} title="TikTok">
+              <FaTiktok size={18} color="#fff" />
+            </a>
           </div>
         </div>
       </div>
 
       <div className={styles.bottom}>
-        <p>© {year} NetIrish. All rights reserved. | <Link to="/about">About Us</Link></p>
+        <p>© {year} NetIrish. All rights reserved. </p>
       </div>
     </footer>
   );
